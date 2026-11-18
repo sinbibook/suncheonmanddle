@@ -240,6 +240,11 @@
 /* main_visual */
 .visual {position:relative;z-index:1;}
 .visual .main_visual_box .visual_img {position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);z-index:90;}
+/* 히어로 로고 (index.essence 이미지, index-mapper mapHeroLogo). 원본처럼 원래 크기로 두고
+   좁은 화면에서는 left:50% 박스 폭(화면 절반)까지만 줄어든다 — windmillhill title.png 450 → 375 폭에서 188.
+   위 텍스트용 width(min(72vw, 760px) / 80%)를 풀어야 원본 크기가 된다 */
+.visual .main_visual_box .visual_img.hero_logo {width:auto;}
+.visual .main_visual_box .visual_img.hero_logo img {display:block;max-width:100%;height:auto;}
 .visual .main_visual_box .swiper-container,
 .visual .main_visual_box .swiper-wrapper,
 .visual .main_visual_box .swiper-slide {height:100vh;}
@@ -289,6 +294,14 @@
 .main_special ul li:hover .img {transform:scale(0.9)}
 .main_special ul li span {margin-top:1.5em;font-size:20px;line-height:1.35;color:#999;font-family:var(--font-ko-sub);display:block;}
 .main_special ul li p {font-size:20px;line-height:1.45;margin:1.5em 0;}
+/* 줄바꿈 자리 (base-mapper balanceListRows) — 현재 열 수(4 / 3)에 맞는 것만 켠다. 2열(≤640)은 그대로 */
+.main_special ul li.row-break {display:none;width:100%;height:0;margin:0;}
+@media only screen and (min-width:861px) {
+	.main_special ul li.row-break-c4 {display:block;}
+}
+@media only screen and (min-width:641px) and (max-width:860px) {
+	.main_special ul li.row-break-c3 {display:block;}
+}
 
 
 @media only screen and (max-width:1450px) {
@@ -448,7 +461,7 @@
 .visual .sub_visual_box .swiper-wrapper,
 .visual .sub_visual_box .swiper-slide {height:100vh;}
 .sub_visual_wide[data-layout-map-hero-bg],
-.sub_visual_wide[data-directions-hero-bg] {height:100vh;}
+.visual .sub_visual_box [data-directions-hero-bg] {height:100vh;}
 
 /* 서브 카테고리 */
 .visual_title {position:absolute;right:10%;bottom:40px;z-index:5;}
@@ -500,8 +513,10 @@
     .visual .sub_visual_box .swiper-container,
     .visual .sub_visual_box .swiper-wrapper,
     .visual .sub_visual_box .swiper-slide {height:750px;}
-    .sub_visual_wide[data-layout-map-hero-bg],
-    .sub_visual_wide[data-directions-hero-bg] {height:750px;}
+    .sub_visual_wide[data-layout-map-hero-bg] {height:750px;}
+    /* 오시는길: 원본은 1023px 이하에서 헤더(흰 배경) 아래로 사진이 이어진다.
+       우리 헤더는 사진 위에 겹치므로 원본의 "맨 위 → 사진 끝" 거리(헤더 80 + 사진 750)만큼 둔다 */
+    .visual .sub_visual_box [data-directions-hero-bg] {height:830px;}
 
 	/* 서브 카테고리 */
 	.visual_title {right:100px;}
@@ -522,8 +537,9 @@
     .visual .sub_visual_box .swiper-container,
     .visual .sub_visual_box .swiper-wrapper,
     .visual .sub_visual_box .swiper-slide {height:550px;}
-    .sub_visual_wide[data-layout-map-hero-bg],
-    .sub_visual_wide[data-directions-hero-bg] {height:550px;}
+    .sub_visual_wide[data-layout-map-hero-bg] {height:550px;}
+    /* 원본: 헤더 65 + 사진 550 */
+    .visual .sub_visual_box [data-directions-hero-bg] {height:615px;}
 
 	/* 서브 카테고리 */
 	.visual_title {right: 50px;bottom:20px;}
@@ -557,8 +573,11 @@
 	.visual .sub_visual_box	.swiper-container,
 	.visual .sub_visual_box .swiper-wrapper,
 	.visual .sub_visual_box .swiper-slide {height: 280px;}
-	.sub_visual_wide[data-layout-map-hero-bg],
-	.sub_visual_wide[data-directions-hero-bg] {height:280px;}
+	.sub_visual_wide[data-layout-map-hero-bg] {height:280px;}
+	/* 오시는길: 원본(map.html)은 헤더 96 + 사진 350 다음에 흰 띠 타이틀 */
+	.sub_map .visual,
+	.sub_map .visual .sub_visual_box {height:auto;}
+	.visual .sub_visual_box [data-directions-hero-bg] {height:446px;}
 
 	/* 서브 카테고리 */
 	.visual_title {position:static;background:#fff;padding:20px 30px;text-align:right;}
@@ -649,6 +668,8 @@
 /* view */
 .view_cate_box .sub_title:before {content:'';display:inline-block;width:1px;height:30px;background:var(--color-secondary);margin:0 auto;}
 .sub_room .view_cate_box .sub_title h3 {font-family:var(--font-ko-sub);font-weight:400;}
+/* 부대시설 상세 타이틀은 한글 시설명을 쓴다 — 객실 상세와 같은 한글 폰트 */
+.sub_special .view_cate_box .sub_title h3 {font-family:var(--font-ko-sub);font-weight:400;text-transform:none;}
 .sub_room .sub_txt_box .box .txt:before {content:"Rooms";}
 .view_cate_box .sub_cate_wrap {text-align:center;}
 .view_cate_box .sub_cate_wrap ul li a {color:var(--color-secondary);}
@@ -752,6 +773,10 @@
 }
 @media only screen and (max-width:640px) {
 	.sub_special .visual {height:290px;}
+	/* 원본은 640 이하에서 이미지가 몇 장이든 한 줄에 한 장(.sub_img_box li width:100%)이다.
+	   위 장수별 폭 규칙이 선택자가 더 강해 2장일 때 반반으로 남던 것을 원본처럼 풀어 준다 */
+	.sub_special .sub_img_box ul[class*="special_grid_count_"] li,
+	.sub_special .sub_img_box ul.special_grid_count_3 li:nth-child(3) {width:100%;}
 }
 @media only screen and (max-width:479px) {
 }
