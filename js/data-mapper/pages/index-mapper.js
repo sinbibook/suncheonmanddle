@@ -79,6 +79,7 @@
 
     this.mapPropertyNames();
     this.mapHero();
+    this.mapHeroLogo();
     this.mapRoomIntro();
     this.mapRoomSlides();
     this.mapMemories();
@@ -138,6 +139,25 @@
         wrapper.appendChild(slide);
       }.bind(this)
     );
+  };
+
+  // MAPPER: index.essence.images[isSelected][0] → [data-index-hero-logo]
+  // 원본 히어로 가운데 로고(.visual_img)를 크롤러가 essence 이미지 칸에 넣는다.
+  // B형은 essence 의 제목·설명(Room Preview)만 쓰므로 이미지 칸을 히어로 로고 칸으로 빌린다 (A형과 같은 방식).
+  // 기본정보 로고(homepage.images[0].logo)는 헤더 로고 전용이다 — 원본도 헤더 로고와 히어로 로고가 다른 파일이다.
+  // 이미지가 없으면 hidden 그대로 두어 지금처럼 이미지 전용 히어로다.
+  IndexMapper.prototype.mapHeroLogo = function () {
+    var logo = this.getSelectedImages((this.getSection().essence || {}).images || [])[0];
+    var alt = this.getPropertyName();
+    document.querySelectorAll('[data-index-hero-logo]').forEach(function (box) {
+      box.innerHTML = '';
+      box.hidden = !(logo && logo.url);
+      if (box.hidden) return;
+      var img = document.createElement('img');
+      img.src = logo.url;
+      img.alt = alt;
+      box.appendChild(img);
+    });
   };
 
   IndexMapper.prototype.mapRoomSlides = function () {
@@ -286,6 +306,8 @@
         li.appendChild(p);
         ul.appendChild(li);
       });
+
+      self.balanceListRows(ul);
     });
   };
 

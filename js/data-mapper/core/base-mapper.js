@@ -147,6 +147,42 @@
     return list.length ? list[0].url : '';
   };
 
+  // 원형 SPECIAL 목록이 여러 줄이면 줄마다 개수를 고르게 나눈다 (5개 → 4+1 대신 3+2, 7개 → 4+3).
+  // 열 수(PC 4 / 태블릿 3)마다 줄바꿈 li 를 끼워 두고, CSS 가 현재 열 수에 맞는 것만 켠다.
+  // (style.css: .main_special ul li.row-break-c4 / .row-break-c3)
+  BaseDataMapper.prototype.balanceListRows = function (ul) {
+    var items = Array.prototype.filter.call(ul.children, function (li) {
+      return !li.classList.contains('row-break');
+    });
+    var n = items.length;
+    var breaks = {};
+
+    [4, 3].forEach(function (cols) {
+      if (n <= cols) return;
+      var rows = Math.ceil(n / cols);
+      var base = Math.floor(n / rows);
+      var extra = n % rows;
+      var pos = 0;
+      for (var r = 0; r < rows - 1; r++) {
+        pos += base + (r < extra ? 1 : 0);
+        (breaks[pos] = breaks[pos] || []).push(cols);
+      }
+    });
+
+    Object.keys(breaks).forEach(function (pos) {
+      var li = document.createElement('li');
+      li.className =
+        'row-break' +
+        breaks[pos]
+          .map(function (cols) {
+            return ' row-break-c' + cols;
+          })
+          .join('');
+      li.setAttribute('aria-hidden', 'true');
+      ul.insertBefore(li, items[pos]);
+    });
+  };
+
   // 데이터 변환 (스네이크 케이스 → 카멜 케이스)
   BaseDataMapper.prototype.convertToCamelCase = function (obj) {
     if (Array.isArray(obj)) {

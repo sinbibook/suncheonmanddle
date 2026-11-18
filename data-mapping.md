@@ -132,7 +132,8 @@ homepage.images[0].logo[isSelected] 있으면 img 표시
 | `data-footer-representative`  | 대표자           | `property.businessInfo.representativeName`        |
 | `data-footer-business-name`   | 업체명           | `property.businessInfo.businessName`              |
 | `data-footer-business-number` | 사업자번호       | `property.businessInfo.businessNumber`            |
-| `data-ybs-button`             | 야놀자 YBS       | `property.ybsId`                                  |
+| `.privacy`                    | 개인정보처리방침 | 정적 — `http://design.trip11.net/privacy/privacy_policy.html` (원본과 동일) |
+| `data-ybs-button`             | 야놀자 YBS       | `property.ybsId` (없으면 `data-ybs-wrap` `<p>` 째 숨김) |
 | `data-booking-link`           | 모바일 예약 버튼 | `property.realtimeBookingId`                      |
 | `.copy`                       | 카피라이트       | `property.tripProviderName` → 없으면 정적 문구 |
 
@@ -145,6 +146,7 @@ homepage.images[0].logo[isSelected] 있으면 img 표시
 | data-* 속성                       | 요소                           | JSON 경로                                                                    |
 | --------------------------------- | ------------------------------ | ---------------------------------------------------------------------------- |
 | `data-index-hero-slides`          | `.main_visual .swiper-wrapper` | `pages.index.sections[0].hero.images[isSelected]`                            |
+| `data-index-hero-logo`            | 히어로 가운데 로고 `.visual_img` | `index.essence.images[isSelected][0]` — 없으면 숨김 (아래 "히어로 로고" 참조) |
 | `data-index-eyebrow`              | 섹션 eyebrow                   | `WELCOME TO {nameEn}` fallback `WELCOME TO PENSION`                          |
 | `data-index-room-title`           | Room Preview 제목              | `index.essence.title → Room Preview`                                         |
 | `data-index-room-description`     | Room Preview 설명              | `index.essence.description → 편안함과 즐거움이 있는 곳, {name}`              |
@@ -159,6 +161,15 @@ homepage.images[0].logo[isSelected] 있으면 img 표시
 | `#popup-container`                | 팝업                           | `homepage.customFields.popup.popups[]`                                       |
 
 히어로 영역은 이전 결정대로 텍스트 오버레이 없이 이미지 전용으로 사용한다. 따라서 `index.hero.title`, `index.hero.description`은 데이터에 있어도 화면에는 노출하지 않고 `index.hero.images`만 매핑한다. `index.gallery.description`은 오른쪽 Healing Place 타이틀/이미지와 같은 섹션 설명으로 보고 Memories 설명 자리에 우선 매핑한다. `index.signature.description`처럼 원본 디자인에 대응 영역이 없는 설명값은 화면에 새 영역을 만들지 않는다. 배경 장식용 필기체 텍스트는 정적 텍스트로 유지한다.
+
+### 히어로 로고 — `index.essence` 이미지 칸
+
+원본 히어로 가운데에 로고 이미지(`.main_visual_box .visual_img img`, windmillhill `title.png`)가 있는 숙소는 크롤러가 그 이미지를 `index.essence.images` 에 넣는다.
+B형은 `essence` 의 제목·설명(Room Preview)만 쓰고 이미지 칸이 비어 있어 히어로 로고 칸으로 빌린다 (A형 히어로 로고와 같은 방식).
+선택된 이미지가 있으면 히어로 가운데에 띄우고, 없으면 지금처럼 이미지 전용 히어로다.
+
+- **기본정보 로고(`homepage.images[0].logo`)는 헤더 전용이다.** 원본도 헤더 로고(`logo.png` / 모바일 `b_logo.png`)와 히어로 로고(`title.png`)가 다른 파일이다.
+- 크기는 원본 그대로: 원래 크기, 좁은 화면에서는 화면 폭의 절반까지 줄어든다 (title.png 450×350 → 375 폭에서 188×146).
 
 ### 히어로 버튼
 
@@ -404,7 +415,7 @@ special 상세는 `evergreenpension.co.kr/special6.html` 기준으로, 히어로
 
 | data-* 속성                    | 요소                                | JSON 경로                                                                           |
 | ------------------------------ | ----------------------------------- | ----------------------------------------------------------------------------------- |
-| `data-directions-hero-bg`      | `.sub_visual_wide` background-image | `pages.directions.sections[0].hero.images[isSelected][0]`                           |
+| `data-directions-hero-bg`      | `.sub_visual_bg` background-image   | `pages.directions.sections[0].hero.images[isSelected][0]`                           |
 | `data-directions-body-title`   | 본문 `MAP` 아래 설명                | `pages.directions.sections[0].hero.title → "위치안내"`                              |
 | `data-property-address`        | 지도 하단 주소                      | `property.address`                                                                  |
 | `data-directions-notice-title` | 안내 제목                           | `pages.directions.sections[0].notice.title → "자가용 이용시"`                       |
